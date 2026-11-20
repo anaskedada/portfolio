@@ -21,7 +21,7 @@
     /* Two muted accents */
     --accent: #1f3a68;     /* navy blue: section titles, skill bars, tags */
     --accent-soft: #e8edf5;
-    --accent2: #7a2b3779;    /* burgundy: links, dates, timeline */
+    --accent2: #7a2b37;    /* burgundy: links, dates, timeline */
   }
   @page { size: A4; margin: 11mm 13mm; }
   * { box-sizing: border-box; }
@@ -144,38 +144,33 @@
   .skill.is-key dd { color: var(--ink); }
 
   /* Experience: timeline */
-  .timeline { position: relative; }
+  /* No position:relative/absolute here: keeps the PDF text in reading order for ATS */
   .job {
     display: grid;
     grid-template-columns: 21mm 1fr;
-    gap: 0 5mm;
+    gap: 0 3mm;
     break-inside: avoid;
-    position: relative;
-    padding-bottom: 2.4mm;
   }
-  .job:last-child { padding-bottom: 0; }
-  .job::before {
-    content: "";
-    position: absolute;
-    left: calc(21mm + 1.9mm);
-    top: 1.6mm;
-    bottom: -1.2mm;
-    width: 1px;
-    background: var(--rule);
+  .job-body {
+    border-left: 1px solid var(--rule);
+    padding: 0 0 2.4mm 4mm;
   }
-  .job:last-child::before { display: none; }
-  .job::after {
+  .job:last-child .job-body { border-left-color: transparent; padding-bottom: 0; }
+  .job .job-title::before {
+    /* timeline dot, sitting on the line */
     content: "";
-    position: absolute;
-    left: calc(21mm + 1mm);
-    top: 1.3mm;
+    display: inline-block;
     width: 2mm;
     height: 2mm;
+    margin-left: calc(-4mm - 1mm - 0.5px);
+    margin-right: 3mm;
     border-radius: 50%;
     background: var(--paper);
     border: 1.4px solid var(--accent2);
+    box-sizing: border-box;
+    vertical-align: 0.05em;
   }
-  .job:first-child::after { background: var(--accent2); }
+  .job:first-child .job-title::before { background: var(--accent2); }
   .job-dates {
     font-size: 8.2pt;
     color: var(--accent2);
@@ -183,23 +178,22 @@
     text-align: right;
     padding-top: 0.3mm;
   }
-  .job-body { padding-left: 1mm; }
   .job-title { font-weight: 700; font-size: 10pt; color: var(--navy); }
   .job-title span { font-weight: 400; color: var(--muted); }
 
   .bullets { list-style: none; margin-top: 0.8mm; }
   .bullets li {
-    position: relative;
     padding-left: 3.6mm;
     margin-bottom: 0.5mm;
   }
   .bullets li::before {
     content: "";
-    position: absolute;
-    left: 0.4mm;
-    top: 0.62em;
+    display: inline-block;
     width: 1.6mm;
     height: 1px;
+    margin-left: -3.2mm;
+    margin-right: 1.6mm;
+    vertical-align: 0.3em;
     background: var(--accent);
   }
 
@@ -386,15 +380,14 @@
     .profile { font-size: 16px; line-height: 1.7; }
     .skills { gap: 12px 32px; }
     .skill { padding-left: 12px; border-left-width: 3px; }
-    .job { grid-template-columns: 130px 1fr; gap: 0 24px; padding-bottom: 20px; }
-    .job::before { left: calc(130px + 9px); top: 8px; }
-    .job::after { left: calc(130px + 4px); top: 6px; width: 11px; height: 11px; border-width: 2px; }
+    .job { grid-template-columns: 130px 1fr; gap: 0 16px; }
+    .job-body { padding: 0 0 20px 22px; }
+    .job .job-title::before { width: 11px; height: 11px; border-width: 2px; margin-left: calc(-22px - 6px); margin-right: 16px; }
     .job-dates { font-size: 13.5px; }
-    .job-body { padding-left: 6px; }
     .job-title { font-size: 16.5px; }
     .bullets { margin-top: 6px; }
     .bullets li { padding-left: 18px; margin-bottom: 4px; }
-    .bullets li::before { width: 8px; height: 2px; top: 0.75em; }
+    .bullets li::before { width: 8px; height: 2px; margin-left: -16px; margin-right: 8px; }
     .project { padding: 16px 0 18px; }
     .project-head { gap: 6px 10px; }
     .stack li { font-size: 12.5px; padding: 2px 9px; border-radius: 5px; }
@@ -424,11 +417,8 @@
     .contact li { white-space: normal; }
     .skills, .other-projects, .bottom { grid-template-columns: 1fr; }
     .bottom > div + div { margin-top: 18px; }
-    .job { grid-template-columns: 1fr; padding-left: 22px; }
-    .job::before { left: 5px; top: 10px; }
-    .job::after { left: 0; top: 6px; }
-    .job-dates { text-align: left; }
-    .job-body { padding-left: 0; }
+    .job { grid-template-columns: 1fr; }
+    .job-dates { text-align: left; padding-left: 22px; }
     .project-head .pill { margin-left: 0; }
   }
 </style>
@@ -496,7 +486,7 @@
 
 <section id="profil">
   <h2>Profil</h2>
-  <p class="profile">Développeur PHP/Symfony avec plus de 2 ans d’expérience en CDI, spécialisé dans les applications métier sur mesure : plateformes e-commerce, back-offices multi-rôles, API REST et intégrations de paiement (Stripe, CMI). Expérience complémentaire sur WordPress/WooCommerce, PrestaShop et le développement mobile (Flutter, React Native). Je traduis des règles métier complexes – tarification B2B, abonnements, planification – en applications maintenables et performantes. Je conçois également des agents IA et des automatisations sur mesure pour les entreprises : agents de vente, agents d’appel, agents de calcul et de devis, scripts et tâches automatisées.</p>
+  <p class="profile">Développeur Backend PHP / Symfony, plus de 2 ans d’expérience en CDI. Je conçois des applications métier sur mesure – e-commerce, back-offices multi-rôles, API REST, paiements (Stripe, CMI) – et je traduis des règles métier complexes (tarification B2B, abonnements, planification) en code maintenable et performant. Je développe aussi des agents IA et des automatisations pour les entreprises : vente, appels, calcul de devis, tâches automatisées.</p>
 </section>
 
 <section id="competences">
