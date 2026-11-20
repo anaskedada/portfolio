@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anass Kedada – Développeur Backend PHP / Symfony</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    /* Neutrals on white */
+    --black: #121417;      /* body text */
+    --ink: #121417;
+    --navy: #1c2b45;       /* name, job titles, project names */
+    --muted: #3f454d;      /* dark gray: secondary text */
+    --soft: #5f666f;       /* lighter gray: meta */
+    --rule: #d6d9de;
+    --paper: #ffffff;
+    /* Two muted accents */
+    --accent: #1f3a68;     /* navy blue: section titles, skill bars, tags */
+    --accent-soft: #e8edf5;
+    --accent2: #7a2b3779;    /* burgundy: links, dates, timeline */
+  }
+  @page { size: A4; margin: 11mm 13mm; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #e9ecef;
+    font-family: "Source Sans 3", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 9pt;
+    line-height: 1.37;
+    color: var(--ink);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  a { color: inherit; text-decoration: none; }
+  p { margin: 0; }
+  ul { margin: 0; padding: 0; }
+
+  /* Screen: show the CV as an A4 sheet */
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 10mm auto;
+    padding: 11mm 13mm;
+    background: var(--paper);
+    box-shadow: 0 2px 6px rgba(0,0,0,.08), 0 18px 40px -20px rgba(0,0,0,.25);
+  }
+  @media print {
+    body { background: var(--paper); }
+    .page { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; }
+  }
+  @media (max-width: 820px) {
+    .page { width: auto; margin: 0; padding: 6mm 5mm; }
+  }
+
+  /* ── Header band ─────────────────────────── */
+  .cv-header {
+    background: var(--paper);
+    color: var(--ink);
+    padding: 0 0 3.6mm;
+    border-bottom: 2px solid var(--navy);
+  }
+  .cv-header h1 {
+    font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+    font-size: 25pt;
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -0.01em;
+    color: var(--navy);
+  }
+  .headline {
+    margin-top: 2mm;
+    font-size: 11.5pt;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .contact {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.6mm 6mm;
+    margin-top: 3.2mm;
+    font-size: 8.8pt;
+    color: var(--muted);
+  }
+  .contact li { display: inline-flex; align-items: center; gap: 1.8mm; white-space: nowrap; }
+  .contact svg { width: 3.4mm; height: 3.4mm; flex: none; color: var(--accent); }
+  .contact a:hover { color: var(--accent2); }
+
+  /* ── Sections ────────────────────────────── */
+  section { margin-top: 4.4mm; }
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+    margin: 0 0 2mm;
+    font-family: "Source Sans 3", "Segoe UI", Arial, sans-serif;
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h2::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+  h2::before {
+    content: "";
+    width: 2.2mm;
+    height: 2.2mm;
+    border-radius: 0.5mm;
+    background: var(--accent);
+    flex: none;
+  }
+  .profile {
+    font-size: 9.2pt;
+    line-height: 1.38;
+    color: var(--ink);
+  }
+
+  /* Skills: two-column grid */
+  .skills {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.3mm 7mm;
+    margin: 0;
+  }
+  .skill {
+    break-inside: avoid;
+    padding-left: 2.4mm;
+    border-left: 2px solid var(--rule);
+  }
+  .skill dt { display: inline; font-weight: 700; color: var(--navy); }
+  .skill dt::after { content: " : "; font-weight: 400; color: var(--soft); }
+  .skill dd { display: inline; margin: 0; color: var(--muted); }
+  .skill.is-key { border-left-color: var(--accent); }
+  .skill.is-key dt { color: var(--accent); }
+  .skill.is-key dd { color: var(--ink); }
+
+  /* Experience: timeline */
+  .timeline { position: relative; }
+  .job {
+    display: grid;
+    grid-template-columns: 21mm 1fr;
+    gap: 0 5mm;
+    break-inside: avoid;
+    position: relative;
+    padding-bottom: 2.4mm;
+  }
+  .job:last-child { padding-bottom: 0; }
+  .job::before {
+    content: "";
+    position: absolute;
+    left: calc(21mm + 1.9mm);
+    top: 1.6mm;
+    bottom: -1.2mm;
+    width: 1px;
+    background: var(--rule);
+  }
+  .job:last-child::before { display: none; }
+  .job::after {
+    content: "";
+    position: absolute;
+    left: calc(21mm + 1mm);
+    top: 1.3mm;
+    width: 2mm;
+    height: 2mm;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1.4px solid var(--accent2);
+  }
+  .job:first-child::after { background: var(--accent2); }
+  .job-dates {
+    font-size: 8.2pt;
+    color: var(--accent2);
+    font-weight: 600;
+    text-align: right;
+    padding-top: 0.3mm;
+  }
+  .job-body { padding-left: 1mm; }
+  .job-title { font-weight: 700; font-size: 10pt; color: var(--navy); }
+  .job-title span { font-weight: 400; color: var(--muted); }
+
+  .bullets { list-style: none; margin-top: 0.8mm; }
+  .bullets li {
+    position: relative;
+    padding-left: 3.6mm;
+    margin-bottom: 0.5mm;
+  }
+  .bullets li::before {
+    content: "";
+    position: absolute;
+    left: 0.4mm;
+    top: 0.62em;
+    width: 1.6mm;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* Projects */
+  .project {
+    break-inside: avoid;
+    padding: 1.7mm 0 1.8mm;
+    border-top: 1px dashed var(--rule);
+  }
+  .project:first-of-type { border-top: 0; padding-top: 0; }
+  .project-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.8mm 2.5mm;
+  }
+  .project-head .pill { margin-left: auto; }
+  .pill {
+    flex: none;
+    font-size: 8pt;
+    font-weight: 600;
+    color: var(--accent2);
+    border: 1px solid color-mix(in srgb, var(--accent2) 45%, transparent);
+    border-radius: 99px;
+    padding: 0.2mm 2.4mm;
+    white-space: nowrap;
+  }
+  .stack {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1mm;
+    margin: 0;
+  }
+  .stack li {
+    font-size: 7.8pt;
+    font-weight: 600;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 1mm;
+    padding: 0.1mm 1.8mm;
+  }
+
+  .sub-title {
+    margin-top: 3mm;
+  }
+  .other-projects {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.4mm 7mm;
+  }
+  .other-projects li { break-inside: avoid; color: var(--muted); }
+  .other-projects strong { color: var(--navy); }
+  .other-projects a { color: var(--accent2); }
+
+  /* Bottom: education / languages / qualities */
+  .bottom {
+    display: grid;
+    grid-template-columns: 1.7fr 1fr;
+    gap: 0 8mm;
+    break-inside: avoid;
+  }
+  .edu-item {
+    display: grid;
+    grid-template-columns: 11mm 1fr;
+    gap: 0 2.5mm;
+    margin-bottom: 1.1mm;
+  }
+  .edu-year { font-weight: 700; color: var(--accent2); }
+  .edu-item small { color: var(--muted); font-size: 8.6pt; }
+  .edu-item small::before { content: " · "; }
+  .side-block + .side-block { margin-top: 3mm; }
+  .side-block p { color: var(--ink); }
+
+  /* ═══════════ Website view (screen only — print/PDF unchanged) ═══════════ */
+  .site-nav { display: none; }
+  @media screen {
+    html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+    body { background: #f3f4f6; font-size: 15px; line-height: 1.6; }
+    .site-nav {
+      display: block;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--rule);
+    }
+    .nav-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; flex: none; }
+    .avatar {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      background: var(--navy);
+      color: #fff;
+      font-family: "Source Serif 4", Georgia, serif;
+      font-weight: 700;
+      font-size: 16px;
+      box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--accent);
+    }
+    .avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .brand-text { display: grid; line-height: 1.2; }
+    .brand-text strong { color: var(--navy); font-size: 15px; }
+    .brand-text small { color: var(--soft); font-size: 12.5px; }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 2px;
+      margin: 0 auto;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-links a {
+      display: block;
+      padding: 7px 11px;
+      border-radius: 6px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .nav-links a:hover { color: var(--navy); background: var(--accent-soft); }
+    .nav-links a.is-active { color: var(--accent); background: var(--accent-soft); }
+    .nav-actions { display: flex; gap: 8px; flex: none; }
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 6px;
+      border: 1px solid var(--navy);
+      background: var(--navy);
+      color: #fff;
+      font: 600 14px/1 "Source Sans 3", "Segoe UI", Arial, sans-serif;
+      cursor: pointer;
+    }
+    .nav-btn:hover { background: var(--accent); border-color: var(--accent); }
+    .nav-btn.ghost { background: transparent; color: var(--navy); }
+    .nav-btn.ghost:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* Page becomes a normal website column with section cards */
+    .page {
+      width: auto;
+      max-width: 1040px;
+      min-height: 0;
+      margin: 0 auto;
+      padding: 28px 20px 56px;
+      background: transparent;
+      box-shadow: none;
+    }
+    .cv-header,
+    .page > section {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 26px 30px;
+      margin-top: 18px;
+    }
+    .cv-header {
+      margin-top: 0;
+      padding: 40px 30px 30px;
+      border-top: 4px solid var(--navy);
+    }
+    .cv-header h1 { font-size: 46px; }
+    .headline { font-size: 20px; margin-top: 10px; }
+    .contact { font-size: 14.5px; gap: 10px 22px; margin-top: 20px; }
+    .contact svg { width: 17px; height: 17px; }
+    h2 { font-size: 13px; margin-bottom: 16px; }
+    h2::before { width: 10px; height: 10px; border-radius: 2px; }
+    .profile { font-size: 16px; line-height: 1.7; }
+    .skills { gap: 12px 32px; }
+    .skill { padding-left: 12px; border-left-width: 3px; }
+    .job { grid-template-columns: 130px 1fr; gap: 0 24px; padding-bottom: 20px; }
+    .job::before { left: calc(130px + 9px); top: 8px; }
+    .job::after { left: calc(130px + 4px); top: 6px; width: 11px; height: 11px; border-width: 2px; }
+    .job-dates { font-size: 13.5px; }
+    .job-body { padding-left: 6px; }
+    .job-title { font-size: 16.5px; }
+    .bullets { margin-top: 6px; }
+    .bullets li { padding-left: 18px; margin-bottom: 4px; }
+    .bullets li::before { width: 8px; height: 2px; top: 0.75em; }
+    .project { padding: 16px 0 18px; }
+    .project-head { gap: 6px 10px; }
+    .stack li { font-size: 12.5px; padding: 2px 9px; border-radius: 5px; }
+    .pill { font-size: 13px; padding: 3px 12px; }
+    .pill:hover { background: var(--accent2); color: #fff; }
+    .other-projects { gap: 14px 32px; }
+    .other-projects a:hover { text-decoration: underline; }
+    .bottom { gap: 0 40px; }
+    .edu-item { grid-template-columns: 52px 1fr; margin-bottom: 8px; }
+    .edu-item small { font-size: 14px; }
+    .side-block + .side-block { margin-top: 18px; }
+  }
+  @media screen and (max-width: 860px) {
+    .nav-inner { flex-wrap: wrap; gap: 8px 14px; }
+    .nav-links { order: 3; width: 100%; margin: 0; }
+    .nav-actions { margin-left: auto; }
+    .brand-text small { display: none; }
+  }
+  @media screen and (max-width: 640px) {
+    .nav-btn.ghost { display: none; }
+    .page { padding: 16px 12px 40px; }
+    .cv-header, .page > section { padding: 20px 18px; border-radius: 10px; }
+    .cv-header { padding-top: 28px; }
+    .cv-header h1 { font-size: 34px; }
+    .headline { font-size: 17px; }
+    .contact { flex-direction: column; gap: 8px; }
+    .contact li { white-space: normal; }
+    .skills, .other-projects, .bottom { grid-template-columns: 1fr; }
+    .bottom > div + div { margin-top: 18px; }
+    .job { grid-template-columns: 1fr; padding-left: 22px; }
+    .job::before { left: 5px; top: 10px; }
+    .job::after { left: 0; top: 6px; }
+    .job-dates { text-align: left; }
+    .job-body { padding-left: 0; }
+    .project-head .pill { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="Navigation">
+  <div class="nav-inner">
+    <a class="brand" href="#top" aria-label="Anass Kedada – haut de page">
+      <span class="avatar">
+        <span class="avatar-initials">AK</span>
+        <!-- Ta photo : place un fichier "photo-anass.jpg" à côté de ce fichier HTML -->
+        <img src="photo-anass.jpg" alt="Anass Kedada" onerror="this.remove()">
+      </span>
+      <span class="brand-text">
+        <strong>Anass Kedada</strong>
+        <small>Backend PHP / Symfony</small>
+      </span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#profil">Profil</a></li>
+      <li><a href="#competences">Compétences</a></li>
+      <li><a href="#experience">Expérience</a></li>
+      <li><a href="#projets">Projets</a></li>
+      <li><a href="#formation">Formation</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button type="button" class="nav-btn ghost" onclick="window.print()">Imprimer</button>
+      <a class="nav-btn" href="/cv-anass-kedada.pdf" download>Télécharger PDF</a>
+    </div>
+  </div>
+</nav>
+<div class="page" id="top">
+
+<header class="cv-header" id="contact">
+  <h1>Anass Kedada</h1>
+  <div class="headline">Développeur Backend PHP / Symfony – Full Stack</div>
+  <ul class="contact">
+    <li>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m3.8 7 8.2 6 8.2-6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+      <a href="mailto:Anaskedada20@gmail.com">Anaskedada20@gmail.com</a>
+    </li>
+    <li>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 3.5h3l1.5 4-2 1.3a11 11 0 0 0 6.1 6.1l1.3-2 4 1.5v3a2 2 0 0 1-2.1 2A16.5 16.5 0 0 1 4.5 5.6a2 2 0 0 1 2.1-2.1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <a href="tel:+212658084788">+212 6 58 08 47 88</a>
+    </li>
+    <li>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.5-5.7-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.3 12 21 12 21Z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+      Rabat, Maroc
+    </li>
+    <li>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 10.5V16M8 7.6v.1M11.5 16v-3.2c0-1.5.9-2.4 2.1-2.4s1.9.9 1.9 2.4V16M11.5 10.5V16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <a href="https://www.linkedin.com/in/anas-kedada-btx/">linkedin.com/in/anas-kedada-btx</a>
+    </li>
+    <li>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+      <a href="https://github.com/anaskedada">github.com/anaskedada</a>
+    </li>
+    <li>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3c2.7 2.8 2.7 15.2 0 18M12 3c-2.7 2.8-2.7 15.2 0 18" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+      <a href="https://portfolio-lake-eight-25.vercel.app/">Portfolio : portfolio-lake-eight-25.vercel.app</a>
+    </li>
+  </ul>
+</header>
+
+<section id="profil">
+  <h2>Profil</h2>
+  <p class="profile">Développeur PHP/Symfony avec plus de 2 ans d’expérience en CDI, spécialisé dans les applications métier sur mesure : plateformes e-commerce, back-offices multi-rôles, API REST et intégrations de paiement (Stripe, CMI). Expérience complémentaire sur WordPress/WooCommerce, PrestaShop et le développement mobile (Flutter, React Native). Je traduis des règles métier complexes – tarification B2B, abonnements, planification – en applications maintenables et performantes. Je conçois également des agents IA et des automatisations sur mesure pour les entreprises : agents de vente, agents d’appel, agents de calcul et de devis, scripts et tâches automatisées.</p>
+</section>
+
+<section id="competences">
+  <h2>Compétences techniques</h2>
+  <dl class="skills">
+    <div class="skill is-key"><dt>Backend</dt><dd>PHP, Symfony, Doctrine ORM, Twig, EasyAdmin, API REST, JWT, gestion des rôles et permissions, architecture MVC</dd></div>
+    <div class="skill is-key"><dt>IA et automatisation</dt><dd>Création d’agents IA, agents IA d’appel (voix), systèmes multi-agents, agents de vente, agents de calcul et de devis, scripts et tâches automatisées</dd></div>
+    <div class="skill"><dt>Bases de données</dt><dd>MySQL, modélisation de données, migrations, optimisation de requêtes</dd></div>
+    <div class="skill"><dt>Frontend</dt><dd>JavaScript, TypeScript, React, Vue.js, Vite, HTML, CSS, intégration d’API</dd></div>
+    <div class="skill"><dt>CMS / E-commerce</dt><dd>WordPress, WooCommerce (thème sur mesure), PrestaShop (modules sur mesure)</dd></div>
+    <div class="skill"><dt>Mobile</dt><dd>Flutter / Dart, GetX, React Native, Firebase (Firestore, FCM)</dd></div>
+    <div class="skill"><dt>Paiement et services</dt><dd>Stripe, CMI, notifications push, géolocalisation</dd></div>
+    <div class="skill"><dt>Performance</dt><dd>Mise en cache, LiipImagineBundle (redimensionnement, WebP), Cloudflare CDN</dd></div>
+    <div class="skill"><dt>Outils</dt><dd>Git, GitHub, Bitbucket, Fork, Docker, Jest, VS Code</dd></div>
+    <div class="skill"><dt>Autres langages</dt><dd>Python, Java (notions)</dd></div>
+  </dl>
+</section>
+
+<section id="experience">
+  <h2>Expérience professionnelle</h2>
+  <div class="timeline">
+    <div class="job">
+      <div class="job-dates">05/2024 – aujourd’hui</div>
+      <div class="job-body">
+        <div class="job-title">Développeur Backend PHP / Symfony <span>– Picaxel (CDI)</span></div>
+        <ul class="bullets">
+          <li>Développement et maintenance d’applications web métier en Symfony : plateformes e-commerce, systèmes de réservation et back-offices multi-rôles.</li>
+          <li>Conception d’API REST consommées par des interfaces React / Vue.js et des applications mobiles.</li>
+          <li>Modélisation des bases de données MySQL, gestion des migrations et optimisation des requêtes.</li>
+          <li>Mise en place de systèmes de rôles et de permissions granulaires (administrateurs, staff, gestionnaires).</li>
+          <li>Optimisation des performances : mise en cache, traitement des images et distribution via CDN.</li>
+          <li>Refactorisation du code existant et collaboration avec l’équipe front-end pour l’intégration des API.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="job">
+      <div class="job-dates">03/2024 – 05/2024</div>
+      <div class="job-body">
+        <div class="job-title">Développeur Web stagiaire <span>– TechNova Solutions</span></div>
+        <ul class="bullets">
+          <li>Développement de fonctionnalités web en HTML, CSS et JavaScript.</li>
+          <li>Intégration d’API REST existantes.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="job">
+      <div class="job-dates">01/2023 – 03/2024</div>
+      <div class="job-body">
+        <div class="job-title">Développeur Mobile stagiaire <span>– BENOCA</span></div>
+        <ul class="bullets">
+          <li>Développement d’applications mobiles multiplateformes avec Flutter.</li>
+          <li>Intégration d’API REST, gestion des données et interfaces responsives.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projets">
+  <h2>Projets sélectionnés</h2>
+
+  <div class="project">
+    <div class="project-head">
+      <div class="job-title">Golf Marketplace <span>– plateforme e-commerce et abonnements</span></div>
+      <ul class="stack"><li>Symfony</li><li>Twig</li><li>LiipImagineBundle</li><li>Cloudflare CDN</li></ul>
+      <a class="pill" href="https://www.golfmarketplace.com/">golfmarketplace.com</a>
+    </div>
+    <ul class="bullets">
+      <li>Plateforme e-commerce de produits de golf avec système d’abonnement aux clubs, côté utilisateur et administration.</li>
+      <li>Back-office pour gérer produits, pages, utilisateurs et abonnements, avec permissions granulaires et tableaux de bord dédiés à chaque rôle.</li>
+      <li>Score PageSpeed Insights d’environ 90+ grâce au traitement des images (redimensionnement, WebP, cache), à Cloudflare CDN et à un sous-domaine dédié aux médias.</li>
+    </ul>
+  </div>
+
+  <div class="project">
+    <div class="project-head">
+      <div class="job-title">Pro Occasion Rayonnage <span>– configurateur 3D et e-commerce de rayonnage industriel</span></div>
+      <ul class="stack"><li>PHP</li><li>Vite</li><li>configurateur 3D</li></ul>
+    </div>
+    <ul class="bullets">
+      <li>Solution complète (site de vente, configurateur et administration) permettant aux clients et aux administrateurs de concevoir en direct, en 3D, leurs rayonnages et mezzanines.</li>
+      <li>Calcul du prix exact de chaque pièce qui compose la configuration, et vente en ligne des rayonnages et mezzanines configurés.</li>
+    </ul>
+  </div>
+
+  <div class="project">
+    <div class="project-head">
+      <div class="job-title">Systema Vending <span>– maintenance d’un parc de distributeurs</span></div>
+      <ul class="stack"><li>Symfony (API)</li><li>React</li><li>Vue.js</li><li>cartographie et itinéraires</li></ul>
+    </div>
+    <ul class="bullets">
+      <li>Plateforme de gestion de maintenance pour un réseau de plus de 400 distributeurs automatiques répartis par régions.</li>
+      <li>Planification des interventions des techniciens, avec calcul automatique des durées selon le type de machine, la localisation et la priorité.</li>
+    </ul>
+  </div>
+
+  <div class="project">
+    <div class="project-head">
+      <div class="job-title">Cochet <span>– e-commerce agricole B2B / B2C</span></div>
+      <ul class="stack"><li>WordPress</li><li>WooCommerce</li><li>thème sur mesure</li></ul>
+    </div>
+    <ul class="bullets">
+      <li>Tarification calculée selon le rôle (particulier, revendeur, grande entreprise) et la région, avec remises dynamiques et règles de TVA par zone.</li>
+      <li>Visibilité conditionnelle des prix et parcours d’achat simplifié pour des machines et équipements lourds.</li>
+    </ul>
+  </div>
+
+  <div class="project">
+    <div class="project-head">
+      <div class="job-title">InterieurMarbre <span>– module PrestaShop de devis B2B</span></div>
+      <ul class="stack"><li>PrestaShop</li><li>PHP</li><li>module sur mesure</li></ul>
+    </div>
+    <ul class="bullets">
+      <li>Module permettant aux revendeurs de créer des devis combinant produits, matériaux, services et livraison.</li>
+      <li>Workflow complet (création, validation, suivi, ajustement des prix) et espace administrateur centralisant les devis par entreprise et par produit.</li>
+    </ul>
+  </div>
+
+  <div class="project">
+    <div class="project-head">
+      <div class="job-title">Onyma <span>– réservation de salons de beauté (iOS et Android)</span></div>
+      <ul class="stack"><li>Flutter</li><li>Dart</li><li>Firebase</li><li>GetX</li></ul>
+      <a class="pill" href="https://play.google.com/store/apps/details?id=com.onyma.usar">Google Play</a>
+    </div>
+    <ul class="bullets">
+      <li>Deux applications (client et salon) avec recherche géolocalisée jusqu’à 400 km et filtres par ville, date, service et mot-clé.</li>
+      <li>Réservation avec disponibilités en temps réel, notifications push (Firestore, FCM), rappels automatiques 45 min avant le rendez-vous et tableau de bord gérant.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="autres-projets">
+  <h2>Autres projets</h2>
+  <ul class="other-projects">
+    <li><strong>Freshmania</strong> (<a href="https://www.freshmania.ma/">freshmania.ma</a>) – commandes et réservations pour un restaurant (API Symfony, React) : personnalisation des plats, paiement en ligne CMI, tableau de bord financier ; score PageSpeed Insights de 97.</li>
+    <li><strong>Fryvy</strong> (<a href="https://www.fryvy.com/">fryvy.com</a>, <a href="https://play.google.com/store/apps/details?id=com.chamsed.fryvy">Google Play</a>) – mise en relation freelances / clients (React Native, Symfony) : paiements Stripe, back-office EasyAdmin.</li>
+    <li><strong>Transfertsways</strong> (<a href="https://www.transfertsways.com/">transfertsways.com</a>) – réservation de transferts privés et d’excursions (Symfony), back-office transporteurs (trajets, véhicules, activités) ; score PageSpeed Insights de 95.</li>
+    <li><strong>Seelver</strong> – gestion de résidences pour personnes âgées (Symfony) : chambres, lits, visites, séjours et suivi des résidents.</li>
+    <li><strong>GreenSmile</strong> (<a href="https://www.greensmile.ma/fr/">greensmile.ma</a>) – événements agricoles et blog (Symfony) : réservation en ligne et back-office pour administrateurs et organisateurs.</li>
+    <li><strong>Natea</strong> (<a href="https://www.natea.info/fr/">natea.info</a>) – site pour un centre de massage et de bien-être ; score PageSpeed Insights de 98.</li>
+    <li><strong>Boutiques e-commerce</strong> – Les Sens de Marrakech (<a href="https://www.lessensdemarrakech.ma/">lessensdemarrakech.ma</a>, score PageSpeed Insights de 92), Glowhaira, Botanica Alma.</li>
+  </ul>
+</section>
+
+<section class="bottom" id="formation">
+  <div>
+    <h2>Formation</h2>
+    <div class="edu-item"><span class="edu-year">2024</span><div>Licence professionnelle – Développement web et mobile<small>Megacampus, Maroc</small></div></div>
+    <div class="edu-item"><span class="edu-year">2023</span><div>DUT Développement digital<small>Institut Spécialisé de Technologie, Maroc</small></div></div>
+    <div class="edu-item"><span class="edu-year">2021</span><div>Licence fondamentale en gestion<small>Faculté Ibn Zohr, Maroc</small></div></div>
+    <div class="edu-item"><span class="edu-year">2017</span><div>Baccalauréat sciences physiques-chimie<small>Maroc</small></div></div>
+  </div>
+  <div>
+    <div class="side-block">
+      <h2>Langues</h2>
+      <!-- Ajoute ton niveau si tu veux (ex. Français – courant, Anglais – professionnel) -->
+      <p>Français, Anglais</p>
+    </div>
+    <div class="side-block">
+      <h2>Qualités</h2>
+      <p>Esprit d’analyse, résolution de problèmes, autonomie, travail en équipe, gestion du temps.</p>
+    </div>
+  </div>
+</section>
+
+</div>
+<script>
+  (function () {
+    var links = document.querySelectorAll('.nav-links a');
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+    if (!('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && map[e.target.id]) {
+          links.forEach(function (a) { a.classList.remove('is-active'); });
+          map[e.target.id].classList.add('is-active');
+        }
+      });
+    }, { rootMargin: '-35% 0px -60% 0px' });
+    Object.keys(map).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) io.observe(el);
+    });
+  })();
+</script>
+</body>
+</html>
